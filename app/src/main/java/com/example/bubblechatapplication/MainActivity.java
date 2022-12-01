@@ -1,15 +1,20 @@
 package com.example.bubblechatapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -30,11 +35,16 @@ public class MainActivity extends AppCompatActivity {
     private int port_num = 0;
 
 
-    private LinearLayout nickContainer, portContainer, chatBubblesBox, bubbleContainer;
+    private LinearLayout nickContainer, portContainer, chatBubblesBox, bubbleContainer, chatReceive;
     private EditText editNick, editPort, editMsg;
     private Button btnOK, btnEnter, btnSend;
+    private ImageView btnHeart, heart;
     private ScrollView chatboxScroll;
     private TextView bubble, tv_sender, tv_guide1;
+
+    private int doubleClickFlag = 0;
+    private final long  CLICK_DELAY = 250;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
         editPort = (EditText)findViewById(R.id.edit_port);
         editMsg = (EditText)findViewById(R.id.edit_msg);
         btnSend = (Button)findViewById(R.id.btn_send);
+
+        btnHeart = (ImageView)findViewById(R.id.heart);
 
         editMsg.setEnabled(false);
         btnSend.setEnabled(false);
@@ -75,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                             } else {
                                 new Thread() {
                                     public void run() {
-                                        connet();
+                                        connect();
                                     }
                                 }.start();
                             }
@@ -102,11 +114,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void connet() {
+    private void connect() {
         try {
             port_num= Integer.valueOf(portStr);
             if (port_num != 0)
-                socket = new Socket("192.168.0.23", port_num);
+                socket = new Socket("192.168.23.214", port_num);
             System.out.println("서버 연결됨.");
 
 
@@ -135,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
 
                     // "이곳에 채팅내용이 표시됩니다" 가이드 텍스트 숨기기
                     tv_guide1.setVisibility(View.GONE);
+                    btnHeart.setVisibility(View.GONE);
                 }
             });
 
@@ -176,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
                 //System.out.println("############# msg : " + msg + " ##############");
 
                 if (isNotification(msg)) {  // 안내메시지
-                    bubbleContainer = new LinearLayout(MainActivity.this);
+                    bubbleContainer =  new LinearLayout(MainActivity.this);
                     bubble = new TextView(MainActivity.this);
 
                     bubble.setTextColor(Color.BLACK);
@@ -186,6 +199,7 @@ public class MainActivity extends AppCompatActivity {
                     bubble.setText(msg);
 
                     bubble.setBackgroundResource(R.drawable.border_round_notif);
+
                     bubbleContainer.setGravity(Gravity.CENTER);
 
                     runOnUiThread(new Runnable() {
@@ -203,10 +217,19 @@ public class MainActivity extends AppCompatActivity {
 
                 final String sender = whoIsSender(msg);
                 bubbleContainer = new LinearLayout(MainActivity.this);
+
                 bubble = new TextView(MainActivity.this);
+                heart = new ImageView(MainActivity.this);
+                heart.setImageResource(R.drawable.heart);
+                heart.setMaxWidth(15);
+                heart.setMaxHeight(15);
+                chatReceive = new LinearLayout(MainActivity.this);
+
                 bubble.setMaxWidth(700);
                 bubbleContainer.setOrientation(LinearLayout.VERTICAL);
 
+                chatReceive.setOrientation(LinearLayout.HORIZONTAL);
+                chatReceive.setGravity(Gravity.CENTER_VERTICAL);
 
                 if (!sender.equals(lastSender)) {
                     if (sender.equals(nickName)) {
@@ -222,31 +245,73 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
 
-
                 bubble.setTextColor(Color.BLACK);
                 if (sender.equals(nickName)) {   // 내가 보낸 메시지
                     bubble.setBackgroundResource(R.drawable.border_round_yellow);
                     bubbleContainer.setGravity(Gravity.END);
-                } else if (sender.equals("서버")) {    // 서버가 보낸 메시지
+                    heart.setVisibility(View.INVISIBLE);
+                } else if (sender.equals("위치")) {    // 위치가 보낸 메시지
+                    bubble.setBackgroundResource(R.drawable.border_round_trans);
+                    bubbleContainer.setGravity(Gravity.START);
+                    bubble.setTextColor(Color.BLUE);
+                }
+                else if (sender.equals("서버")) {    // 서버가 보낸 메시지
                     bubble.setBackgroundResource(R.drawable.border_round_blue);
                     bubbleContainer.setGravity(Gravity.START);
                     bubble.setTextColor(Color.WHITE);
                 } else if (sender.equals("인원수")) {
                     // 버블 추가하지 않음.
                     pp_CountStr = msg;
+                    heart.setVisibility(View.INVISIBLE);
                     continue;
                 } else if (sender.equals("♥")) {
-                    bubble.setBackgroundResource(R.drawable.border_round_pink);
+                    bubble.setBackgroundResource(R.drawable.border_round_red);
                     bubbleContainer.setGravity(Gravity.START);
                     bubble.setTextColor(Color.WHITE);
+                    heart.setVisibility(View.INVISIBLE);
                 }
-                else {    // 상대방(채티방 참가자)이 보낸 메시지
+                else {    // 상대방(채팅방 참가자)이 보낸 메시지
+                    Log.d("SENDER",sender );
                     bubble.setBackgroundResource(R.drawable.border_round_white);
                     bubbleContainer.setGravity(Gravity.START);
+                    heart.setVisibility(View.INVISIBLE);
                 }
                 bubble.setLayoutParams(params);
                 bubble.setTextSize(16);
                 bubble.setText(getMsgContent(msg));
+
+                /* 좋아요 */
+                bubble.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        doubleClickFlag++;
+                        Handler handler = new Handler();
+                        Runnable clickRunnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                doubleClickFlag = 0;
+                                // todo click event
+                            }
+                        };
+                        if( doubleClickFlag == 1 ) {
+                            handler.postDelayed( clickRunnable, CLICK_DELAY );
+                        }else if( doubleClickFlag == 2 ) {
+                            doubleClickFlag = 0;
+                            // todo 더블클릭 이벤트
+                            // 서버만 더블클릭 적용 가능
+                            if (sender.equals("서버")) {
+                                heart.setBackgroundResource(R.drawable.heart_filled);
+                                String likeID = "[" + msg + "]"; // + sender +
+
+                                new Thread() {
+                                    public void run() {
+                                        sendMessage("♥:"+ nickName + "님이 출동합니다. :" + likeID);
+                                    }
+                                }.start();
+                            }
+                        }
+                    }
+                });
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -254,7 +319,17 @@ public class MainActivity extends AppCompatActivity {
                         if (!sender.equals(lastSender) && !sender.equals(nickName)) {
                             bubbleContainer.addView(tv_sender);
                         }
-                        bubbleContainer.addView(bubble);
+//                        bubbleContainer.addView(bubble);
+//                        bubbleContainer.addView(heart);
+                        chatReceive.addView(bubble);
+
+//                        if (!sender.equals(nickName) && !sender.equals("인원수") && !sender.equals("서버") && !sender.equals("♥")) {
+//                            chatReceive.addView(heart);
+//                        }
+                        if (sender.equals("서버")) {
+                            chatReceive.addView(heart);
+                        }
+                        bubbleContainer.addView(chatReceive);
                         chatBubblesBox.addView(bubbleContainer);
                     }
                 });

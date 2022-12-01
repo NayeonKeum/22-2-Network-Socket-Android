@@ -7,8 +7,12 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-
+    <color name="center_green">#47a877</color>
+    <color name="local_org">#d98209</color>
+    <color name="ff_red">#ba3d3d</color>
+    <color name="like_red">#FF3333</color>
     <color name="colorPrimary">#c5d2db</color>
     <color name="colorPrimaryDark">#8da5b5</color>
     <color name="colorAccent">#f7ee6a</color>
+    <color name="location_trans">#11C0C0C0</color>
 </resources>
