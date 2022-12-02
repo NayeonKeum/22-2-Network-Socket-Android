@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">BubbleChatApplication</string>
+    <string name="host">10.101.13.24</string>
 </resources>

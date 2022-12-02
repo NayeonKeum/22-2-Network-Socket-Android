@@ -3,11 +3,15 @@ package com.example.bubblechatapplication;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -35,9 +39,9 @@ public class MainActivity extends AppCompatActivity {
     private int port_num = 0;
 
 
-    private LinearLayout nickContainer, portContainer, chatBubblesBox, bubbleContainer, chatReceive;
+    private LinearLayout nickContainer, portContainer, chatBubblesBox, bubbleContainer, sendContainer, chatReceive, header, header2;
     private EditText editNick, editPort, editMsg;
-    private Button btnOK, btnEnter, btnSend;
+    private Button btnOK, btnEnter, btnSend, btnRole1, btnRole2, btnRole3;
     private ImageView btnHeart, heart;
     private ScrollView chatboxScroll;
     private TextView bubble, tv_sender, tv_guide1;
@@ -58,12 +62,22 @@ public class MainActivity extends AppCompatActivity {
         chatboxScroll = (ScrollView) findViewById(R.id.scrollView);
         chatBubblesBox = (LinearLayout) findViewById(R.id.linearLayout2);
 
+        sendContainer = (LinearLayout)findViewById(R.id.linearLayout3);
+        sendContainer.setVisibility(View.INVISIBLE);
+
+        header = (LinearLayout)findViewById(R.id.linearLayout4);
+        header2 = (LinearLayout)findViewById(R.id.linearLayout5);
+
+
         editNick = (EditText)findViewById(R.id.edit_nick);
         editPort = (EditText)findViewById(R.id.edit_port);
         editMsg = (EditText)findViewById(R.id.edit_msg);
         btnSend = (Button)findViewById(R.id.btn_send);
 
         btnHeart = (ImageView)findViewById(R.id.heart);
+        btnRole1=(Button)findViewById(R.id.btn_role_1);
+        btnRole2=(Button)findViewById(R.id.btn_role_2);
+        btnRole3=(Button)findViewById(R.id.btn_role_3);
 
         editMsg.setEnabled(false);
         btnSend.setEnabled(false);
@@ -97,11 +111,39 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        /* 역할 구분 */
+        final int[] roleNum = {0};
+
+        btnRole1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                roleNum[0] =1;
+                Toast.makeText(MainActivity.this, "[중앙관리본부]를 선택하셨습니다.", Toast.LENGTH_SHORT).show();
+//                Log.d("Role", String.valueOf(roleNum[0]));
+            }
+        });
+        btnRole2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                roleNum[0] = 2;
+                Toast.makeText(MainActivity.this, "[지역소방본부]를 선택하셨습니다.", Toast.LENGTH_SHORT).show();
+            }
+        });
+        btnRole3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                roleNum[0] = 3;
+                Toast.makeText(MainActivity.this, "[소방대원]을 선택하셨습니다.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!String.valueOf(editMsg.getText()).equals("")) {
-                    msg1 = nickName + ":" + String.valueOf(editMsg.getText()) + "\n";
+                    msg1 = String.valueOf(roleNum[0]) + ";" + nickName + ":" + String.valueOf(editMsg.getText()) + "\n";
                     new Thread() {
                         public void run() {
                             sendMessage(msg1);  // 메시지 전송
@@ -114,11 +156,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @SuppressLint("ResourceAsColor")
     private void connect() {
         try {
             port_num= Integer.valueOf(portStr);
             if (port_num != 0)
-                socket = new Socket("192.168.23.214", port_num);
+                socket = new Socket("10.101.13.24", port_num);//String.valueOf(R.string.host), port_num);
             System.out.println("서버 연결됨.");
 
 
@@ -142,12 +185,21 @@ public class MainActivity extends AppCompatActivity {
                     editNick.setEnabled(false);
                     editPort.setEnabled(false);
                     btnEnter.setEnabled(false);
+                    btnRole1.setEnabled(false);
+                    btnRole2.setEnabled(false);
+                    btnRole3.setEnabled(false);
                     nickContainer.setVisibility(View.GONE);
                     portContainer.setVisibility(View.GONE);
 
                     // "이곳에 채팅내용이 표시됩니다" 가이드 텍스트 숨기기
                     tv_guide1.setVisibility(View.GONE);
                     btnHeart.setVisibility(View.GONE);
+                    header.setVisibility(View.GONE);
+                    header2.setVisibility(View.GONE);
+
+                    // 전송 레이아웃 보이게
+                    sendContainer.setVisibility(View.VISIBLE);
+
                 }
             });
 
@@ -188,6 +240,8 @@ public class MainActivity extends AppCompatActivity {
                 //System.out.println("############# lastSender : " + lastSender + " ##############");
                 //System.out.println("############# msg : " + msg + " ##############");
 
+                Log.d("MESSAGE", msg);
+
                 if (isNotification(msg)) {  // 안내메시지
                     bubbleContainer =  new LinearLayout(MainActivity.this);
                     bubble = new TextView(MainActivity.this);
@@ -216,6 +270,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 final String sender = whoIsSender(msg);
+                final int role = Integer.parseInt(getRole(msg));
                 bubbleContainer = new LinearLayout(MainActivity.this);
 
                 bubble = new TextView(MainActivity.this);
@@ -238,10 +293,20 @@ public class MainActivity extends AppCompatActivity {
                     else {
                         tv_sender = new TextView(MainActivity.this);
                         tv_sender.setText(sender);
-                        tv_sender.setTextColor(Color.WHITE);
+
                         tv_sender.setTextSize(12);
                         tv_sender.setTypeface(null, Typeface.BOLD);
                         tv_sender.setLayoutParams(params1);
+                        if(role==1){
+                            tv_sender.setTextColor(R.color.center_green);
+                        }else if (role==2){
+                            tv_sender.setTextColor(R.color.local_org);
+                        }else if (role==3){
+                            tv_sender.setTextColor(R.color.ff_red);
+                        }
+                        if (role==6){
+                            bubble.setAutoLinkMask(Linkify.WEB_URLS);
+                        }
                     }
                 }
 
@@ -301,11 +366,11 @@ public class MainActivity extends AppCompatActivity {
                             // 서버만 더블클릭 적용 가능
                             if (sender.equals("서버")) {
                                 heart.setBackgroundResource(R.drawable.heart_filled);
-                                String likeID = "[" + msg + "]"; // + sender +
+                                String likeID = "[" + sender +": "+getMsgContent(msg) + "]"; // + sender +
 
                                 new Thread() {
                                     public void run() {
-                                        sendMessage("♥:"+ nickName + "님이 출동합니다. :" + likeID);
+                                        sendMessage(String.valueOf(role)+";♥:"+ nickName + "님이 출동합니다.\n" + likeID);
                                     }
                                 }.start();
                             }
@@ -362,17 +427,24 @@ public class MainActivity extends AppCompatActivity {
         */
         return !msg.contains(":");
     }
+    private String getRole(String msg0) {
+        int indexColon = msg0.indexOf(";");  // msg에서 가장 먼저 나오는 : => 닉네임 규칙 - :를 포함하면 안됨!
+
+        return msg0.substring(0, indexColon);
+    }
 
     private String whoIsSender(String msg3) {
+        int indexColon_role = msg3.indexOf(";");
         int indexColon = msg3.indexOf(":");  // msg에서 가장 먼저 나오는 : => 닉네임 규칙 - :를 포함하면 안됨!
 
-        return msg3.substring(0, indexColon);
+        return msg3.substring(indexColon_role+1, indexColon);
     }
 
     private String getMsgContent(String msg4) {
+
         int indexColon = msg4.indexOf(":");  // msg에서 가장 먼저 나오는 : => 닉네임 규칙 - :를 포함하면 안됨!
 
-        return msg4.substring(indexColon+1);
+        return msg4.substring(indexColon+1, msg4.length());
     }
 
     private String removeLastEnter(String msg5) {
