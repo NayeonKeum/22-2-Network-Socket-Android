@@ -242,7 +242,7 @@ public class RCMainActivity extends AppCompatActivity {
         try {
             port_num= Integer.valueOf(portStr);
             if (port_num != 0)
-                socket = new Socket("10.101.13.15", port_num);//String.valueOf(R.string.host), port_num);
+                socket = new Socket("192.168.44.82", port_num);//String.valueOf(R.string.host), port_num);
             System.out.println("서버 연결됨.");
 
 
@@ -297,9 +297,11 @@ public class RCMainActivity extends AppCompatActivity {
 
                 if (isNotification(msg)) {  // 안내메시지
                     if (msg.contains("인원수:")) continue;
+
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+
                             messagesList.add(new MessageModel(msg, "서버", MessageViewAdapter.MESSAGE_TYPE_NOTI, -1));//
                             // notify adapter
                             adapter.notifyDataSetChanged();
@@ -329,6 +331,18 @@ public class RCMainActivity extends AppCompatActivity {
                     public void run() {
                         if (!sender.equals(lastSender) && !sender.equals(nickName)) {
                             // 내가 아닐 때
+                        }
+                        if (msg.contains("출동합니다.")){
+                            String transMsg="";
+                            //4;♥:ㄹㅈㄷ님이 출동합니다.::서버:<html>센서가 산불을 감지하였습니<br>다.</html>:21:04:02
+                            String[] regex = msg.split(":");
+                            transMsg=regex[0]+":"+regex[1]+"\n["+regex[3]+":"+regex[4]+"]";
+                            transMsg=transMsg.replaceAll("<html>", "");
+                            transMsg=transMsg.replaceAll("</html>", "");
+                            transMsg=transMsg.replaceAll("<br>", "");
+                            transMsg=transMsg.replaceAll("</br>", "");
+                            Log.d("MESSAGE", "transMsg: "+transMsg);
+                            msgModal.msg=transMsg;
                         }
                         if (sender.equals("서버")) {
 //                            chatReceive.addView(heart);

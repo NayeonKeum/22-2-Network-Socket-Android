@@ -5,7 +5,6 @@ public class MessageModel {
 
     public String msg, sender;
     public int messageType, senderType;
-//    public Date messageTime = new Date();
     public int liked = 0;
 
     // Constructor

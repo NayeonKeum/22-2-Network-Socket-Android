@@ -53,7 +53,8 @@ public class MessageViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private class MessageInViewHolder extends RecyclerView.ViewHolder {
 
         TextView messageTV, senderTV;
-        ImageView heart;
+//        ImageView heart;
+        CheckBox heart;
 
         MessageInViewHolder(final View itemView, final OnItemClickEventListener a_itemClickListener) {
             super(itemView);
@@ -121,6 +122,7 @@ public class MessageViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
             if (messageModel.sender=="♥"){
                 heart.setVisibility(View.GONE);
+                messageTV.setBackgroundResource(R.drawable.border_round_red);
             }
             if (messageModel.msg.contains("http")){
                 messageTV.setAutoLinkMask(Linkify.WEB_URLS);
@@ -259,12 +261,13 @@ public class MessageViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         if (list.get(position).senderType==5) {
                             Log.d("EVENT", "doubleclicked, position"+position);
 
-                            ((MessageInViewHolder) holder).heart.setBackgroundResource(R.drawable.heart_filled);
-
+//                            ((MessageInViewHolder) holder).heart.setBackgroundResource(R.drawable.heart_filled);
+                            ((MessageInViewHolder) holder).heart.setSelected(true);
                             notifyItemChanged(position);
 
-                            String likeID = "[" + list.get(position).sender +": "+getMsgContent(list.get(position).msg) + "]";
-
+                            //String likeID = "[" + list.get(position).sender +"| "+getMsgContent(list.get(position).msg) + "]";
+                            String likeID = "::" + list.get(position).sender +":<html>"+getMsgContent(list.get(position).msg) + "</html>:::";
+                            // ::서버:<html>센서가 산불을 감지하였습니<br>다.</html>:21:04:02
                             new Thread() {
                                 public void run() {
                                     sendMessage(getRole(list.get(position).msg)+";♥:"+ nickName + "님이 출동합니다.\n" + likeID);
