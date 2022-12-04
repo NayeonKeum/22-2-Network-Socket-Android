@@ -1,26 +1,17 @@
-package com.example.bubblechatapplication;
+package com.example.FireAlertApplication;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Handler;
-import android.text.util.Linkify;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,13 +32,10 @@ public class RCMainActivity extends AppCompatActivity {
     private int port_num = 0;
 
 
-    private LinearLayout nickContainer, portContainer, chatBubblesBox, bubbleContainer, sendContainer, chatReceive, header, header2;
+    private LinearLayout nickContainer, portContainer, sendContainer, header, header2;
     private RecyclerView recyclerView;
     private EditText editNick, editPort, editMsg;
-    private Button btnOK, btnEnter, btnSend, btnRole1, btnRole2, btnRole3;
-    private CheckBox btnHeart, heart;
-    private ScrollView chatboxScroll;
-    private TextView bubble, tv_sender, tv_guide1;
+    private Button btnEnter, btnSend, btnRole1, btnRole2, btnRole3;
 
     private int doubleClickFlag = 0;
     private final long  CLICK_DELAY = 250;
@@ -214,7 +202,6 @@ public class RCMainActivity extends AppCompatActivity {
         });
 
 
-
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -242,9 +229,8 @@ public class RCMainActivity extends AppCompatActivity {
         try {
             port_num= Integer.valueOf(portStr);
             if (port_num != 0)
-                socket = new Socket("192.168.44.82", port_num);//String.valueOf(R.string.host), port_num);
+                socket = new Socket("192.168.23.214", port_num);//String.valueOf(R.string.host), port_num);
             System.out.println("서버 연결됨.");
-
 
             //setTitle("포트: " + portStr);
 

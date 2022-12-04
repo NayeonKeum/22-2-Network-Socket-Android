@@ -1,4 +1,4 @@
-package com.example.bubblechatapplication;
+package com.example.FireAlertApplication;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
@@ -9,14 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.Socket;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import androidx.recyclerview.widget.RecyclerView;
 

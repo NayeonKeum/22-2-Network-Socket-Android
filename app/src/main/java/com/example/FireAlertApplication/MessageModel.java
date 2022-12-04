@@ -1,5 +1,4 @@
-package com.example.bubblechatapplication;
-import java.util.Date;
+package com.example.FireAlertApplication;
 
 public class MessageModel {
 

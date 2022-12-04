@@ -1,4 +1,4 @@
-package com.example.bubblechatapplication;
+package com.example.FireAlertApplication;
 
 import android.content.Context;
 

@@ -1,14 +1,10 @@
-package com.example.bubblechatapplication;
+package com.example.FireAlertApplication;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.GradientDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.util.Linkify;
