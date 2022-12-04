@@ -8,8 +8,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,8 +35,8 @@ public class RCMainActivity extends AppCompatActivity {
     private EditText editNick, editPort, editMsg;
     private Button btnEnter, btnSend, btnRole1, btnRole2, btnRole3;
 
-    private int doubleClickFlag = 0;
-    private final long  CLICK_DELAY = 250;
+//    private int doubleClickFlag = 0;
+//    private final long  CLICK_DELAY = 250;
 
     // RCView
     ArrayList<MessageModel> messagesList = new ArrayList<>();
@@ -80,62 +78,6 @@ public class RCMainActivity extends AppCompatActivity {
             public void onItemClick(View a_view, int a_position) {
                 final MessageModel messageModel = messagesList.get(a_position);
                 Log.d("CLICK", "clicked "+a_position);
-//                // Toast.makeText(PhMainActivity.this, item.getName() + " Click event", Toast.LENGTH_SHORT).show();
-//
-//                messagesList.get(a_position).liked=1;
-//
-//                Log.d("CLICK", "liked "+messagesList.get(a_position).liked);
-//
-//                adapter.notifyItemChanged(a_position);
-//                adapter.notifyDataSetChanged();
-//
-//                if (messageModel.senderType==5) {
-//                    Log.d("EVENT", "doubleclicked");
-//
-//                    heart.setSelected(true);
-//                    messageModel.setLiked(1);
-//                    adapter.notifyItemChanged(a_position);
-//
-//                    String likeID = "[" + messageModel.sender +": "+getMsgContent(messageModel.msg) + "]";
-//
-//                    new Thread() {
-//                        public void run() {
-//                            sendMessage(getRole(messageModel.msg)+";♥:"+ nickName + "님이 출동합니다.\n" + likeID);
-//                        }
-//                    }.start();
-//                }
-
-//
-//                doubleClickFlag++;
-//                Handler handler = new Handler();
-//                Runnable clickRunnable = new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        doubleClickFlag = 0;
-//                        // todo click event
-//                    }
-//                };
-//                if( doubleClickFlag == 1 ) {
-//                    handler.postDelayed( clickRunnable, CLICK_DELAY);
-//                }else if( doubleClickFlag == 2 ) {
-//                    doubleClickFlag = 0;
-//                    // todo 더블클릭 이벤트
-//                    // 서버만 더블클릭 적용 가능
-//                    if (messageModel.senderType==5) {
-//                        Log.d("EVENT", "doubleclicked");
-//
-//                        heart.setBackgroundResource(R.drawable.heart_filled);
-//                        adapter.notifyItemChanged(a_position);
-//
-//                        String likeID = "[" + messageModel.sender +": "+getMsgContent(messageModel.msg) + "]";
-//
-//                        new Thread() {
-//                            public void run() {
-//                                sendMessage(getRole(messageModel.msg)+";♥:"+ nickName + "님이 출동합니다.\n" + likeID);
-//                            }
-//                        }.start();
-//                    }
-//                }
             }
         });
 
@@ -173,8 +115,6 @@ public class RCMainActivity extends AppCompatActivity {
             }
         });
 
-
-
         /* 역할 구분 */
         final int[] roleNum = {0};
 
@@ -183,7 +123,6 @@ public class RCMainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 roleNum[0] =1;
                 Toast.makeText(RCMainActivity.this, "[중앙관리본부]를 선택하셨습니다.", Toast.LENGTH_SHORT).show();
-//                Log.d("Role", String.valueOf(roleNum[0]));
             }
         });
         btnRole2.setOnClickListener(new View.OnClickListener() {
@@ -232,26 +171,21 @@ public class RCMainActivity extends AppCompatActivity {
                 socket = new Socket("192.168.23.214", port_num);//String.valueOf(R.string.host), port_num);
             System.out.println("서버 연결됨.");
 
-            //setTitle("포트: " + portStr);
-
             out = new DataOutputStream(socket.getOutputStream());
             in = new DataInputStream(socket.getInputStream());
 
             adapter.out=out;
             adapter.nickName=nickName;
 
-            // 닉네임 설정
             out.writeUTF(nickName);
             System.out.println("클라이언트 : 메시지 전송완료");
 
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    // 메시지 작성 및 전송 기능 활성화
                     editMsg.setEnabled(true);
                     btnSend.setEnabled(true);
 
-                    // 닉네임 입력 및 확인 기능 비활성화 + 숨기기
                     editNick.setEnabled(false);
                     editPort.setEnabled(false);
                     btnEnter.setEnabled(false);
@@ -261,33 +195,26 @@ public class RCMainActivity extends AppCompatActivity {
                     nickContainer.setVisibility(View.GONE);
                     portContainer.setVisibility(View.GONE);
 
-//                    // "이곳에 채팅내용이 표시됩니다" 가이드 텍스트 숨기기
-//                    tv_guide1.setVisibility(View.GONE);
-//                    btnHeart.setVisibility(View.GONE);
                     header.setVisibility(View.GONE);
                     header2.setVisibility(View.GONE);
 
-                    // 전송 레이아웃 보이게
                     sendContainer.setVisibility(View.VISIBLE);
 
                 }
             });
 
-
-            // 화면에 메시지 버블 출력
             while (in != null) {
 
                 msg = removeLastEnter(in.readUTF());
 
                 Log.d("MESSAGE", msg);
 
-                if (isNotification(msg)) {  // 안내메시지
+                if (isNotification(msg)) {
                     if (msg.contains("인원수:")) continue;
 
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-
                             messagesList.add(new MessageModel(msg, "서버", MessageViewAdapter.MESSAGE_TYPE_NOTI, -1));//
                             // notify adapter
                             adapter.notifyDataSetChanged();
@@ -331,7 +258,6 @@ public class RCMainActivity extends AppCompatActivity {
                             msgModal.msg=transMsg;
                         }
                         if (sender.equals("서버")) {
-//                            chatReceive.addView(heart);
                             // 서버일 때
                         }
                         else if (sender.equals(nickName)) {
@@ -364,29 +290,25 @@ public class RCMainActivity extends AppCompatActivity {
     }
 
     private Boolean isNotification(String msg) {
-        /*
-            채팅이 아니라 정보알림일 경우, true
-            "***님이 접속하셨습니다."
-            "***님이 나가셨습니다."
-        */
+        // 정보(noti)
         return !msg.contains(";") || msg.contains("인원수") || msg.contains("접속하셨") ;
     }
     private String getRole(String msg0) {
-        int indexColon = msg0.indexOf(";");  // msg에서 가장 먼저 나오는 : => 닉네임 규칙 - :를 포함하면 안됨!
+        int indexColon = msg0.indexOf(";");
 
         return msg0.substring(0, indexColon);
     }
 
     private String whoIsSender(String msg3) {
         int indexColon_role = msg3.indexOf(";");
-        int indexColon = msg3.indexOf(":");  // msg에서 가장 먼저 나오는 : => 닉네임 규칙 - :를 포함하면 안됨!
+        int indexColon = msg3.indexOf(":");
 
         return msg3.substring(indexColon_role+1, indexColon);
     }
 
     private String getMsgContent(String msg4) {
 
-        int indexColon = msg4.indexOf(":");  // msg에서 가장 먼저 나오는 : => 닉네임 규칙 - :를 포함하면 안됨!
+        int indexColon = msg4.indexOf(":");
 
         return msg4.substring(indexColon+1, msg4.length());
     }

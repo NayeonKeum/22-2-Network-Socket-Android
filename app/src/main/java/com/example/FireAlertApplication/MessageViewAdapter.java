@@ -108,7 +108,6 @@ public class MessageViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             } else if (messageModel.senderType==6){
                 // 위치
                 messageTV.setAutoLinkMask(Linkify.WEB_URLS);
-//                messageTV.setTextColor(Color.parseColor("#0000ff"));
                 messageTV.setBackgroundResource(R.drawable.border_round_trans);
                 heart.setVisibility(View.GONE);
             } else if (messageModel.senderType==-1){
@@ -123,60 +122,18 @@ public class MessageViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             if (messageModel.msg.contains("http")){
                 messageTV.setAutoLinkMask(Linkify.WEB_URLS);
             }
-//            dateTV.setText(DateFormat.getTimeInstance(DateFormat.SHORT).format(messageModel.messageTime));
-
-//            messageTV.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    doubleClickFlag++;
-//                    Handler handler = new Handler();
-//                    Runnable clickRunnable = new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            doubleClickFlag = 0;
-//                            // todo click event
-//                        }
-//                    };
-//                    if( doubleClickFlag == 1 ) {
-//                        handler.postDelayed( clickRunnable, CLICK_DELAY);
-//                    }else if( doubleClickFlag == 2 ) {
-//                        doubleClickFlag = 0;
-//                        // todo 더블클릭 이벤트
-//                        // 서버만 더블클릭 적용 가능
-//                        if (messageModel.senderType==5) {
-//                            Log.d("EVENT", "doubleclicked, position"+position);
-//
-//                            heart.setBackgroundResource(R.drawable.heart_filled);
-////                            heart.setSelected(true);
-////                            messageModel.setLiked(1);
-////                            list.get(position).liked=1;//setLiked(1);
-////                            heart.setBackgroundResource(R.drawable.heart_filled);
-//
-//                            notifyItemChanged(position);
-//
-//                            String likeID = "[" + messageModel.sender +": "+getMsgContent(messageModel.msg) + "]";
-//
-//                            new Thread() {
-//                                public void run() {
-//                                    sendMessage(getRole(messageModel.msg)+";♥:"+ nickName + "님이 출동합니다.\n" + likeID);
-//                                }
-//                            }.start();
-//                        }
-//                    }
-//                }
-//            });
         }
     }
 
     private String getRole(String msg0) {
-        int indexColon = msg0.indexOf(";");  // msg에서 가장 먼저 나오는 : => 닉네임 규칙 - :를 포함하면 안됨!
+        int indexColon = msg0.indexOf(";");
 
         return msg0.substring(0, indexColon);
     }
 
     private String whoIsSender(String msg3) {
         int indexColon_role = msg3.indexOf(";");
-        int indexColon = msg3.indexOf(":");  // msg에서 가장 먼저 나오는 : => 닉네임 규칙 - :를 포함하면 안됨!
+        int indexColon = msg3.indexOf(":");
 
         return msg3.substring(indexColon_role+1, indexColon);
     }
@@ -200,7 +157,6 @@ public class MessageViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             MessageModel messageModel = list.get(position);
             messageTV.setText(getMsgContent(messageModel.msg));
             senderTV.setText(messageModel.sender);
-//            dateTV.setText(DateFormat.getTimeInstance(DateFormat.SHORT).format(messageModel.messageTime));
         }
     }
 
@@ -209,12 +165,10 @@ public class MessageViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         MessageNotiViewHolder(final View itemView) {
             super(itemView);
             messageTV = itemView.findViewById(R.id.message_text);
-//            dateTV = itemView.findViewById(R.id.date_text);
         }
         void bind(int position) {
             MessageModel messageModel = list.get(position);
             messageTV.setText(getMsgContent(messageModel.msg));
-//            dateTV.setText(DateFormat.getTimeInstance(DateFormat.SHORT).format(messageModel.messageTime));
         }
     }
 
@@ -257,13 +211,10 @@ public class MessageViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         if (list.get(position).senderType==5) {
                             Log.d("EVENT", "doubleclicked, position"+position);
 
-//                            ((MessageInViewHolder) holder).heart.setBackgroundResource(R.drawable.heart_filled);
                             ((MessageInViewHolder) holder).heart.setSelected(true);
                             notifyItemChanged(position);
 
-                            //String likeID = "[" + list.get(position).sender +"| "+getMsgContent(list.get(position).msg) + "]";
                             String likeID = "::" + list.get(position).sender +":<html>"+getMsgContent(list.get(position).msg) + "</html>:::";
-                            // ::서버:<html>센서가 산불을 감지하였습니<br>다.</html>:21:04:02
                             new Thread() {
                                 public void run() {
                                     sendMessage(getRole(list.get(position).msg)+";♥:"+ nickName + "님이 출동합니다.\n" + likeID);
@@ -292,7 +243,7 @@ public class MessageViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private String getMsgContent(String msg4) {
 
-        int indexColon = msg4.indexOf(":");  // msg에서 가장 먼저 나오는 : => 닉네임 규칙 - :를 포함하면 안됨!
+        int indexColon = msg4.indexOf(":");
 
         return msg4.substring(indexColon+1, msg4.length());
     }
