@@ -15,4 +15,8 @@
     <color name="colorPrimaryDark">#8da5b5</color>
     <color name="colorAccent">#f7ee6a</color>
     <color name="location_trans">#11C0C0C0</color>
+    <color name="ibory">#fff7f2</color>
+    <color name="btn_org">#FF6600</color>
+    <color name="main_bg_org">#fcddca</color>
+    <color name="brown">#996666</color>
 </resources>

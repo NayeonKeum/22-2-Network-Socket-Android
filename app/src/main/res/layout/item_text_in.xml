@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/main_layout">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/message_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:padding="2dp">
+
+        <TextView
+            android:id="@+id/sender_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginStart="2dp"
+            android:maxWidth="250dp"
+            android:text="sender"
+            android:textColor="@android:color/black"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/message_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/border_round_blue"
+            android:maxWidth="500dp"
+            android:text="content"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:autoLink="all"
+            app:layout_constraintStart_toStartOf="@+id/sender_text"
+            app:layout_constraintTop_toBottomOf="@+id/sender_text" />
+
+        <ImageView
+            android:id="@+id/heart"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="2dp"
+            android:backgroundTint="#00000000"
+            android:src="@drawable/heart"
+            app:layout_constraintBottom_toBottomOf="@+id/message_text"
+            app:layout_constraintStart_toEndOf="@+id/message_text"
+            app:layout_constraintTop_toTopOf="@+id/message_text"
+             />
+<!--        <CheckBox-->
+<!--            android:id="@+id/heart"-->
+<!--            android:layout_width="15dp"-->
+<!--            android:layout_height="15dp"-->
+<!--            android:button="@drawable/heart_check"-->
+<!--            android:backgroundTint="#00000000"-->
+<!--            android:buttonTint="@color/like_red"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/message_text"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/message_text"-->
+<!--            app:layout_constraintTop_toTopOf="@+id/message_text"-->
+<!--            />-->
+        <!--        <TextView-->
+        <!--            android:id="@+id/date_text"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_alignRight="@+id/message_text"-->
+        <!--            android:layout_below="@+id/message_text"-->
+        <!--            android:textSize="11sp"-->
+        <!--            android:textColor="#b3b3b3"-->
+        <!--            tools:text="11:34" />-->
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>
